@@ -110,7 +110,7 @@ class BasicBlock(object):
 
 file_state = "Nothing"
 
-inf = file('regedit.s', 'r')
+inf = file('foo.s', 'r')
 
 bbs = []
 
