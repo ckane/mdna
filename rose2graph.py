@@ -34,6 +34,7 @@ class Instr(object):
         self.text = ''
         self.raw = []
         self.addr = int(instr_line[0:instr_line.find(':')], 0)
+        self.addr = '0x{:0>16x}'.format(int(instr_line[0:instr_line.find(':')], 0))
 
         # First, get the positions of the two pipes
         pipe_loc = [-1, -1]
@@ -71,7 +72,7 @@ class BasicBlock(object):
            the line after "Basic block". Will iterate through raw_lines and
            will return to caller once it parses an end-of-block situation"""
         self.instrs = []
-        self.addr = 0
+        self.addr = ''
         self.graph = ''
         self.next = []
 
@@ -85,21 +86,26 @@ class BasicBlock(object):
             # If we reach "Successor blocks" statement, save them and break
             succ_stmt = raw_line.find(' Successor blocks: ')
             if succ_stmt > 0:
-                self.next.extend(raw_line[succ_stmt + 19].split(', '))
+                if raw_line[succ_stmt + 19:].find('none') == -1:
+                    self.next.extend(filter(lambda x: x != 'unknown',
+                                            raw_line[succ_stmt + 19:].strip().split(', ')))
+                else:
+                    self.next = []
 
             # If line contains a | then it is possibly going to have an
             # instruction
             elif raw_line.find('|') > 0:
                 # If it is the first instruction, then save its addr as the
                 # block addr
-                self.addr = int(raw_line[0:raw_line.find(':')], 0)
+                if self.addr == '':
+                    self.addr = '0x{:0>16x}'.format(int(raw_line[0:raw_line.find(':')], 0))
 
                 # Finally, parse the line into an Instr
                 self.instrs.append(Instr(raw_line))
 
     def __repr__(self):
         """Return a JSON-format string representation of the elements"""
-        return "{" + "'addr': {a}, 'instrs': {i}, 'graph': {g}, 'next': {n}".format(a=hex(self.addr),
+        return "{" + "'addr': {a}, 'instrs': {i}, 'graph': {g}, 'next': {n}".format(a=self.addr,
                        i=repr(self.instrs), g=repr(self.graph), n=repr(self.next)) + "}"
 
     def to_dict(self):
