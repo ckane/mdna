@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import os
+import sys
 import argparse
 import re
 import exceptions
@@ -110,7 +111,7 @@ class BasicBlock(object):
 
 file_state = "Nothing"
 
-inf = file('foo.s', 'r')
+inf = file(sys.argv[1], 'r')
 
 bbs = []
 
