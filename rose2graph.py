@@ -89,7 +89,7 @@ class BasicBlock(object):
 
             # If line contains a | then it is possibly going to have an
             # instruction
-            if raw_line.find('|') > 0:
+            elif raw_line.find('|') > 0:
                 # If it is the first instruction, then save its addr as the
                 # block addr
                 self.addr = int(raw_line[0:raw_line.find(':')], 0)
