@@ -77,7 +77,7 @@ class BasicBlock(object):
 
         cur_state = "Begin"
 
-        for raw_line in filter(lambda x: x.strip(), raw_lines):
+        for raw_line in (x.strip() for x in raw_lines):
             # If we reach block separator, then break out
             if raw_line == '':
                 break
